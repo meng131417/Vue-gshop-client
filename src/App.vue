@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Router-view></Router-view>
+    <router-view></router-view>
     <FooterGuide></FooterGuide>
   </div>
 </template>
