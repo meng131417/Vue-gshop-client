@@ -4,7 +4,7 @@
       <div class="menu-wrapper">
         <ul>
           <!--current-->
-          <li class="menu-item" v-for="(good,index) in goods" :key="index">
+          <li class="menu-item" v-for="(good,index) in goods" :key="index" :class="{current: index === currentIndex}">
             <span class="text bottom-border-1px">
               <img class="icon" v-if="good.icon" :src="good.icon">
               {{good.name}}
@@ -14,11 +14,11 @@
       </div>
 
       <div class="foods-wrapper">
-        <ul>
+        <ul ref="rightUl">
           <li class="food-list-hook" v-for="(good,index) in goods" :key="index">
             <h1 class="title">{{good.name}}</h1>
             <ul>
-              <li class="food-item bottom-border-1px" v-for="(food,index) in good.foods" :key="index">
+              <li class="food-item bottom-border-1px" v-for="(food, index) in good.foods" :key="index">
                 <div class="icon">
                   <img width="57" height="57" :src="food.icon">
                 </div>
@@ -39,31 +39,6 @@
               </li>
             </ul>
           </li>
-          <li class="food-list food-list-hook">
-            <h1 class="title">香浓甜粥</h1>
-            <ul>
-              <li class="food-item bottom-border-1px">
-                <div class="icon">
-                  <img width="57" height="57" src="http://fuss10.elemecdn.com/6/72/cb844f0bb60c502c6d5c05e0bddf5jpeg.jpeg?imageView2/1/w/114/h/114">
-                </div>
-                <div class="content">
-                  <h2 class="name">红枣山药粥</h2>
-                  <p class="desc">红枣山药糙米粥,素材包</p>
-                  <div class="extra">
-                    <span class="count">月售17份</span>
-                    <span>好评率100%</span>
-                  </div>
-                  <div class="price">
-                    <span class="now">￥29</span>
-                    <span class="old">￥36</span>
-                  </div>
-                  <div class="cartcontrol-wrapper">
-                    CartControl组件
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </li>
         </ul>
       </div>
     </div>
@@ -72,15 +47,67 @@
 </template>
 
 <script>
+  import Bscroll from 'better-scroll'
   import {mapState} from 'vuex'
 
   export default {
+    data () {
+      return {
+        scrollY: 0, // 右侧列表Y轴滑动的位置
+        tops: [] // 右侧列表所有分类li标签的top值
+      }
+    },
+
     computed: {
-      ...mapState(['goods'])
+      ...mapState(['goods']),
+
+      //当前分类的下标
+      currentIndex () {
+        const {scrollY, tops} = this
+
+        return tops.findIndex((top,index) => {
+          // scrollY大于或等于当前top && 小于下一个top
+          return scrollY >= top && scrollY < tops[index+1]
+        })
+      }
     },
 
     mounted () {
-      this.$store.dispatch('getShopGoods')
+      this.$store.dispatch('getShopGoods', () => { // goods数据更新
+        this.$nextTick(() => {
+          this._initScroll()
+          this._initTops()
+        })
+      })
+    },
+
+    methods: {
+      // 不是事件函数，区别一下
+      // 初始化滚动对象
+      _initScroll () {
+        //创建左侧列表的滚动对象
+        new Bscroll ('menu-wrapper', {
+
+        })
+        //创建右侧列表的滚动对象
+        new Bscroll ('foods-wrapper', {
+
+        })
+      },
+
+      // 初始化 tops
+      _initTops () {
+        const tops = []
+        let top = 0
+        const lis = this.$refs.rightUl.getElementsByClassName ('food-list-hook')
+        Array.prototype.slice.call(lis).forEach(li => {
+          top += li.clientHeight
+          tops.push(top)
+        })
+        // 更新tops值
+        this.tops = tops
+        console.log(tops,'---')
+      }
     }
   }
 </script>
