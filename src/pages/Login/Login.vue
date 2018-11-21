@@ -50,7 +50,7 @@
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
-      <a href="javascript:" class="go_back">
+      <a href="javascript:" class="go_back" @click="$router.back()">
         <i class="iconfont icon-jiantou2"></i>
       </a>
     </div>
@@ -150,7 +150,7 @@
           //跳转到个人中心
           this.$router.replace('/profile')
         }else { // 登录失败
-          alert('2')
+          MessageBox.alert(result.msg,'提示')
         }
 
       }

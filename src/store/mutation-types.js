@@ -20,5 +20,14 @@ export const SEND_CODE = 'send_code'
 //重置用户信息
 export const RESET_USER = 'reset_user'
 
+// 接收商家信息
+export const RECEIVE_INFO = 'receive_info'
+
+// 接收商家商品
+export const RECEIVE_GOODS = 'receive_goods'
+
+// 接收商品评价
+export const RECEIVE_RATINGS = 'receive_ratings'
+
 
 
