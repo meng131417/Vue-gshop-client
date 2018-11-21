@@ -1,23 +1,27 @@
 <template>
   <section class="profile">
     <TopHeader title="个人中心" />
-    <section class="profile-number">
+    <section class="profile-number" @click="$router.push(user._id ? '/userinfo' : '/login')">
       <a href="javascript:" class="profile-link">
         <div class="profile_image">
           <i class="iconfont icon-person"></i>
         </div>
         <div class="user-info">
-          <p class="user-info-top">登录/注册</p>
-          <p>
-                <span class="user-icon">
-                  <i class="iconfont icon-shouji icon-mobile"></i>
-                </span>
-            <span class="icon-mobile-number">暂无绑定手机号</span>
+          <p class="user-info-top" v-if="!user.phone">
+            {{user.name ? user.name : '登录|注册'}}
+          </p>
+          <p v-if="!user.name">
+            <span class="user-icon">
+              <i class="iconfont icon-shouji icon-mobile"></i>
+            </span>
+            <span class="icon-mobile-number">
+              {{user.phone ? user.phone : '暂无绑定手机号'}}
+            </span>
           </p>
         </div>
         <span class="arrow">
               <i class="iconfont icon-jiantou1"></i>
-            </span>
+            </span>/
       </a>
     </section>
     <section class="profile_info_data border-1px">
@@ -88,12 +92,30 @@
         </div>
       </a>
     </section>
+    <section class="profile_my_order border-1px">
+     <mt-button type="danger" style="width: 100%" @click="logout">退出登录</mt-button>
+    </section>
   </section>
 
 </template>
 
 <script>
-  export default {}
+  import {mapState} from 'vuex'
+  import {MessageBox} from 'mint-ui'
+  export default {
+    computed: {
+      ...mapState(['user'])
+    },
+
+    methods: {
+      logout () {
+        MessageBox.confirm('确定退出登录吗？')
+          .then(
+
+          )
+      }
+    }
+  }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>

@@ -10,3 +10,15 @@ export const RECEIVE_CATEGORYS = 'receive_categorys'
 
 //接收商家列表
 export const RECEIVE_SHOPS = 'receive_shops'
+
+//接收用户信息
+export const RECEIVE_USER = 'receive_user'
+
+//发送短信验证码
+export const SEND_CODE = 'send_code'
+
+//重置用户信息
+export const RESET_USER = 'reset_user'
+
+
+

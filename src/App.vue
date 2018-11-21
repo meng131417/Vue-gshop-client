@@ -14,8 +14,8 @@
     },
 
     mounted () {
-      console.log('----')
       this.$store.dispatch('getAddress')
+      this.$store.dispatch('getUserInfo')
     }
   }
 </script>
