@@ -92,7 +92,7 @@
         </div>
       </a>
     </section>
-    <section class="profile_my_order border-1px">
+    <section class="profile_my_order border-1px" v-if="user._id">
      <mt-button type="danger" style="width: 100%" @click="logout">退出登录</mt-button>
     </section>
   </section>
@@ -111,7 +111,10 @@
       logout () {
         MessageBox.confirm('确定退出登录吗？')
           .then(
-
+            action => {
+              this.$store.dispatch(' logout')
+            },
+            action => {console.log('点击了取消')}
           )
       }
     }

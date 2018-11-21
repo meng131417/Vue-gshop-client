@@ -12,6 +12,8 @@ import store from './store'
 Vue.component('TopHeader', TopHeader)
 Vue.component(Button.name, Button)
 
+import './mock/mockSever'
+
 new Vue({
   el: '#app',
   render: h => h(App),
