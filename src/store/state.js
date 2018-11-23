@@ -11,5 +11,6 @@ export default {
   user: {}, // 用户信息对象
   info: {}, // 商家信息
   goods: [], // 商家商品
-  ratings: [] // 商家评价
+  ratings: [], // 商家评价
+  cartFoods: [] // 购物车中food列表
 }

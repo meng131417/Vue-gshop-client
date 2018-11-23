@@ -2,9 +2,11 @@
   <div>
     <div class="goods">
       <div class="menu-wrapper">
-        <ul>
+        <ul ref="left">
           <!--current-->
-          <li class="menu-item" v-for="(good,index) in goods" :key="index" :class="{current: index === currentIndex}">
+          <li class="menu-item " v-for="(good,index) in goods" :key="index"
+              :class="{current: index === currentIndex}"
+              @click="clickItem(index)">
             <span class="text bottom-border-1px">
               <img class="icon" v-if="good.icon" :src="good.icon">
               {{good.name}}
@@ -14,11 +16,12 @@
       </div>
 
       <div class="foods-wrapper">
-        <ul ref="rightUl">
+        <ul ref="right">
           <li class="food-list-hook" v-for="(good,index) in goods" :key="index">
             <h1 class="title">{{good.name}}</h1>
             <ul>
-              <li class="food-item bottom-border-1px" v-for="(food, index) in good.foods" :key="index">
+              <li class="food-item bottom-border-1px" v-for="(food,index) in good.foods"
+                  :key="index" @click="showFood(food)">
                 <div class="icon">
                   <img width="57" height="57" :src="food.icon">
                 </div>
@@ -30,10 +33,10 @@
                     <span>好评率{{food.rating}}%</span></div>
                   <div class="price">
                     <span class="now">￥{{food.price}}</span>
-                    <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
+                    <span class="now" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
-                    CartControl组件
+                    <CartControl :food="food"/>
                   </div>
                 </div>
               </li>
@@ -41,39 +44,49 @@
           </li>
         </ul>
       </div>
-    </div>
-  </div>
 
+      <ShopCart/>
+    </div>
+    <Food :food="food" ref="food"/>
+  </div>
 </template>
 
 <script>
-  import Bscroll from 'better-scroll'
+  import BScroll from 'better-scroll'
+  import ShopCart from '../../../components/ShopCart/ShopCart.vue'
   import {mapState} from 'vuex'
+  import Food from '../../../components/Food/Food.vue'
 
   export default {
     data () {
       return {
-        scrollY: 0, // 右侧列表Y轴滑动的位置
-        tops: [] // 右侧列表所有分类li标签的top值
+        scrollY: 0, // 右侧列表Y轴方向的滑动位置
+        tops: [], // 右侧所有分类li标签的top值
+        food: {} // 当前需要显示的food
       }
     },
 
     computed: {
       ...mapState(['goods']),
 
-      //当前分类的下标
+      // 当前分类的下标
       currentIndex () {
-        const {scrollY, tops} = this
-
+        const {scrollY,tops} = this
         return tops.findIndex((top,index) => {
-          // scrollY大于或等于当前top && 小于下一个top
           return scrollY >= top && scrollY < tops[index+1]
         })
+        // 如果下标变化了
+        if(this.index !== index && this.leftScroll ){
+          this.index = index
+          // 将index对应的左侧li滚动到最上面(尽量)
+          const li = this.$refs.left.children[index]
+        }
+        return index
       }
     },
 
     mounted () {
-      this.$store.dispatch('getShopGoods', () => { // goods数据更新
+      this.$store.dispatch('getShopGoods', () => {
         this.$nextTick(() => {
           this._initScroll()
           this._initTops()
@@ -82,32 +95,64 @@
     },
 
     methods: {
-      // 不是事件函数，区别一下
       // 初始化滚动对象
       _initScroll () {
-        //创建左侧列表的滚动对象
-        new Bscroll ('menu-wrapper', {
-
+        // 创建左侧列表滚动对象
+        this.leftScroll = new BScroll ('.menu-wrapper',{
+          click: true
         })
-        //创建右侧列表的滚动对象
-        new Bscroll ('foods-wrapper', {
 
+        // 创建右侧列表滚动对象
+        this.rightScroll =  new BScroll ('.foods-wrapper',{
+          probeType: 1, // 非实时(每隔一定时间才分发), 只有触摸时才分发
+          click: true // 由库派发click事件
         })
+
+        // 绑定scroll监听
+        this.rightScroll.on('scroll', ({x,y}) => {
+          this.scrollY = Math.abs(y)
+        })
+
+        // 绑定滚动结束监听
+        this.rightScroll.on('scrollEnd', ({x,y}) => {
+          this.scrollY = Math.abs(y)
+        })
+
       },
 
-      // 初始化 tops
+      // 初始化tops
       _initTops () {
         const tops = []
         let top = 0
-        const lis = this.$refs.rightUl.getElementsByClassName ('food-list-hook')
+        tops.push(top)
+        const lis = this.$refs.right.getElementsByClassName ('food-list-hook')
         Array.prototype.slice.call(lis).forEach(li => {
           top += li.clientHeight
           tops.push(top)
         })
-        // 更新tops值
         this.tops = tops
-        console.log(tops,'---')
+      },
+
+      clickItem (index) {
+        // 得到目标位置的滚动坐标
+        const y = -this.tops[index]
+        // 更新scrollY为目标位置
+        this.scrollY = -y
+        // 让右侧列表平滑滚动到目标位置
+        this.rightScroll.scrollTo(0,y, 500)
+      },
+
+      showFood (food) {
+        // 更新food状态
+        this.food = food
+        // 显示food组件界面, 标签对象就是组件对象
+        this.$refs.food.toggleShow()
       }
+    },
+
+    components: {
+      ShopCart,
+      Food
     }
   }
 </script>
