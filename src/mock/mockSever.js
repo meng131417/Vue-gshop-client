@@ -9,7 +9,6 @@ import data from './data.json'  // data本身是json 数据，webpack 在打包�
 * 如果只暴漏一个，那就是暴漏data整个数据
 * 分别暴漏，按类型不同来暴漏，data中有不同类型的接口
 * */
-console.log('-----')
 
 Mock.mock('/goods', {code: 0, data: data.goods})
 Mock.mock('/ratings', {code: 0, data: data.ratings})

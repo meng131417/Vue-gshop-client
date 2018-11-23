@@ -14,9 +14,6 @@ export const RECEIVE_SHOPS = 'receive_shops'
 //接收用户信息
 export const RECEIVE_USER = 'receive_user'
 
-//发送短信验证码
-export const SEND_CODE = 'send_code'
-
 //重置用户信息
 export const RESET_USER = 'reset_user'
 
@@ -29,5 +26,11 @@ export const RECEIVE_GOODS = 'receive_goods'
 // 接收商品评价
 export const RECEIVE_RATINGS = 'receive_ratings'
 
+// 增加food数量
+export const ADD_FOOD_COUNT = 'add_food_count'
 
+// 减少food数量
+export const REDUCE_FOOD_COUNT = 'reduce_food_count'
 
+// 清空购物车数据
+export const CLEAR_CART = 'clear_cart'
