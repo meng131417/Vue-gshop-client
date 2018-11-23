@@ -1,32 +1,33 @@
 <template>
-  <div class="food" v-if="isShow">
-    <div class="food-content">
-      <div class="image-header">
-        <img :src="food.image">
-        <p class="foodpanel-desc">{{food.info}}</p>
-        <div class="back">
-          <i class="iconfont icon-arrow_left" @click="toggleShow"></i>
+  <transition name="fade">
+    <div class="food" v-if="isShow">
+      <div class="food-content">
+          <div class="image-header">
+            <img :src="food.image">
+            <p class="foodpanel-desc">{{food.info}}</p>
+            <div class="back">
+              <i class="iconfont icon-arrow_left" @click="toggleShow"></i>
+            </div>
+          </div>
+          <div class="content">
+            <h1 class="title">{{food.name}}</h1>
+            <div class="detail">
+              <span class="sell-count">月售{{food.sellCount}}份</span>
+              <span class="rating">好评率{{food.rating}}%</span>
+            </div>
+            <div class="price">
+              <span class="now">￥{{food.price}}</span>
+              <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
+            </div>
+            <div class="cartcontrol-wrapper">
+              <CartControl :food="food"/>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="content">
-        <h1 class="title">{{food.name}}</h1>
-        <div class="detail">
-          <span class="sell-count">月售{{food.sellCount}}份</span>
-          <span class="rating">好评率{{food.rating}}%</span>
-        </div>
-        <div class="price">
-          <span class="now">￥{{food.price}}</span>
-          <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
-        </div>
-        <div class="cartcontrol-wrapper">
-          <CartControl :food="food"/>
-        </div>
-      </div>
+      <div class="food-cover" @click="toggleShow"></div>
     </div>
-    <div class="food-cover" @click="toggleShow"></div>
-  </div>
+  </transition>
 </template>
-
 
 <script>
   export default {
@@ -72,6 +73,10 @@
       z-index 66
       background #fff
       border-radius 5px
+      &.fade-enter-active, &.fade-leave-active
+        transition all .5s
+      &.fade-enter, &.fade-leave-to
+        opacity 0
       .image-header
         position: relative
         width: 100%
